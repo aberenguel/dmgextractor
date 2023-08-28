@@ -61,6 +61,11 @@ public class UDIFFileView {
         dmgRaf.seek(dmgRaf.length() - 512);
         byte[] kolyData = new byte[512];
         dmgRaf.read(kolyData);
+
+        if (!"koly".equals(new String(kolyData, 0, 4))) {
+            throw new RuntimeIOException("DMG magic 'koly' signature is not present in DMG file");
+        }
+
         return new Koly(kolyData, 0);
     }
 
