@@ -17,6 +17,7 @@
 
 package org.catacombae.dmg.udif;
 
+import java.io.Closeable;
 import java.io.File;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -25,7 +26,7 @@ import org.catacombae.io.ReadableFileStream;
 import org.catacombae.io.ReadableRandomAccessStream;
 import org.catacombae.io.RuntimeIOException;
 
-public class UDIFFileView {
+public class UDIFFileView implements Closeable {
     private ReadableRandomAccessStream dmgRaf;
 
     public UDIFFileView(File file) {
@@ -69,6 +70,7 @@ public class UDIFFileView {
         return new Koly(kolyData, 0);
     }
 
+    @Override
     public void close() throws RuntimeIOException {
         dmgRaf.close();
     }
