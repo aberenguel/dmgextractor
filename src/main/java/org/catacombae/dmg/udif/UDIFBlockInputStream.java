@@ -33,6 +33,8 @@ import org.catacombae.dmgextractor.io.SynchronizedRandomAccessStream;
 import org.catacombae.io.ReadableRandomAccessStream;
 import org.catacombae.io.RuntimeIOException;
 
+import com.github.horrorho.ragingmoose.LZFSEInputStream;
+
 public abstract class UDIFBlockInputStream extends InputStream {
     protected ReadableRandomAccessStream raf;
     protected UDIFBlock block;
@@ -82,6 +84,8 @@ public abstract class UDIFBlockInputStream extends InputStream {
                 return new ZlibBlockInputStream(raf, block, 0);
             case UDIFBlock.BT_BZIP2:
                 return new Bzip2BlockInputStream(raf, block, 0);
+            case UDIFBlock.BT_LZFSE:
+                return new LzfseBlockInputStream(raf, block, 0);
             case UDIFBlock.BT_COPY:
                 return new CopyBlockInputStream(raf, block, 0);
             case UDIFBlock.BT_ZERO:
@@ -455,6 +459,54 @@ public abstract class UDIFBlockInputStream extends InputStream {
         public void close() throws IOException {
             decompressingStream.close();
             bzip2DataStream.close();
+        }
+    }
+
+    public static class LzfseBlockInputStream extends UDIFBlockInputStream {
+
+        private InputStream lafseDataStream;
+        private LZFSEInputStream decompressingStream;
+        private long outPos = 0;
+
+        public LzfseBlockInputStream(ReadableRandomAccessStream raf,
+                UDIFBlock block, int addInOffset)
+                throws IOException, RuntimeIOException {
+
+            super(raf, block, addInOffset);
+
+            lafseDataStream = new RandomAccessInputStream(
+                    new SynchronizedRandomAccessStream(raf),
+                    block.getTrueInOffset(), block.getInSize());
+
+            decompressingStream = new LZFSEInputStream(lafseDataStream);
+        }
+
+        protected void fillBuffer() throws IOException {
+
+            final int bytesToRead = (int) Math.min(block.getOutSize() - outPos,
+                    buffer.length);
+            int totalBytesRead = 0;
+            while(totalBytesRead < bytesToRead) {
+                int bytesRead = decompressingStream.read(buffer, totalBytesRead,
+                        bytesToRead - totalBytesRead);
+                if(bytesRead < 0)
+                    break;
+                else {
+                    totalBytesRead += bytesRead;
+                    outPos += bytesRead;
+                }
+            }
+
+            // The fillBuffer method is responsible for updating bufferPos and
+            // bufferDataLength
+            bufferPos = 0;
+            bufferDataLength = totalBytesRead;
+        }
+
+        @Override
+        public void close() throws IOException {
+            decompressingStream.close();
+            lafseDataStream.close();
         }
     }
 }

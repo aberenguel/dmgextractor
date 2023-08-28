@@ -30,6 +30,9 @@ public class UDIFBlock implements Comparable<UDIFBlock>{
 	as I haven't found a GPL-compatible bzip2 decompressor written in Java yet. */
     public static final int BT_BZIP2 = 0x80000006;
     
+    /** This blocktype means the data is compressed with lzfse (OS X 10.11+ only). */
+    public static final int BT_LZFSE = 0x80000007;
+
     /** This blocktype means the data is uncompressed and can simply be copied. */
     public static final int BT_COPY = 0x00000001;
     
@@ -51,6 +54,7 @@ public class UDIFBlock implements Comparable<UDIFBlock>{
     private static final String BT_ADC_STRING = "BT_ADC";
     private static final String BT_ZLIB_STRING = "BT_ZLIB";
     private static final String BT_BZIP2_STRING = "BT_BZIP2";
+    private static final String BT_LZFSE_STRING = "BT_LZFSE";
     private static final String BT_COPY_STRING = "BT_COPY";
     private static final String BT_ZERO_STRING = "BT_ZERO";
     private static final String BT_ZERO2_STRING = "BT_ZERO2";
@@ -120,6 +124,8 @@ public class UDIFBlock implements Comparable<UDIFBlock>{
                 return BT_ZLIB_STRING;
             case BT_BZIP2:
                 return BT_BZIP2_STRING;
+            case BT_LZFSE:
+                return BT_LZFSE_STRING;
             case BT_COPY:
                 return BT_COPY_STRING;
             case BT_ZERO:
