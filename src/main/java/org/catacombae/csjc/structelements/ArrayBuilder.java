@@ -17,10 +17,16 @@
 
 package org.catacombae.csjc.structelements;
 
+import static org.catacombae.csjc.structelements.Endianness.BIG_ENDIAN;
+import static org.catacombae.csjc.structelements.Endianness.LITTLE_ENDIAN;
+import static org.catacombae.csjc.structelements.IntegerFieldBits.BITS_16;
+import static org.catacombae.csjc.structelements.IntegerFieldBits.BITS_32;
+import static org.catacombae.csjc.structelements.IntegerFieldBits.BITS_64;
+import static org.catacombae.csjc.structelements.IntegerFieldBits.BITS_8;
+import static org.catacombae.csjc.structelements.Signedness.SIGNED;
+import static org.catacombae.csjc.structelements.Signedness.UNSIGNED;
+
 import java.util.LinkedList;
-import static org.catacombae.csjc.structelements.IntegerFieldBits.*;
-import static org.catacombae.csjc.structelements.Signedness.*;
-import static org.catacombae.csjc.structelements.Endianness.*;
 
 /**
  * @author <a href="https://catacombae.org" target="_top">Erik Larsson</a>
@@ -28,7 +34,7 @@ import static org.catacombae.csjc.structelements.Endianness.*;
 public class ArrayBuilder {
 
     private final String typeName;
-    private final LinkedList<StructElement> elements = new LinkedList<StructElement>();
+    private final LinkedList<StructElement> elements = new LinkedList<>();
 
     public ArrayBuilder(String typeName) {
         super();
@@ -36,7 +42,7 @@ public class ArrayBuilder {
     }
 
     public void add(StructElement... elements) {
-        for(StructElement element : elements)
+        for (StructElement element : elements)
             this.elements.add(element);
     }
 
@@ -76,21 +82,21 @@ public class ArrayBuilder {
     }
 
     private void addInt(byte[] data, int offset, int length, Signedness signedness, Endianness endianness) {
-        switch(length) {
-            case 1:
-                add(new IntegerField(data, offset, BITS_8, signedness, endianness));
-                break;
-            case 2:
-                add(new IntegerField(data, offset, BITS_16, signedness, endianness));
-                break;
-            case 4:
-                add(new IntegerField(data, offset, BITS_32, signedness, endianness));
-                break;
-            case 8:
-                add(new IntegerField(data, offset, BITS_64, signedness, endianness));
-                break;
-            default:
-                throw new IllegalArgumentException("You supplied a " + (length * 8) + "-bit value. Only 64, 32, 16 and 8-bit values are supported.");
+        switch (length) {
+        case 1:
+            add(new IntegerField(data, offset, BITS_8, signedness, endianness));
+            break;
+        case 2:
+            add(new IntegerField(data, offset, BITS_16, signedness, endianness));
+            break;
+        case 4:
+            add(new IntegerField(data, offset, BITS_32, signedness, endianness));
+            break;
+        case 8:
+            add(new IntegerField(data, offset, BITS_64, signedness, endianness));
+            break;
+        default:
+            throw new IllegalArgumentException("You supplied a " + (length * 8) + "-bit value. Only 64, 32, 16 and 8-bit values are supported.");
         }
     }
 

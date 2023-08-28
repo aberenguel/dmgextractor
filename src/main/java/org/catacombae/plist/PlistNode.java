@@ -24,7 +24,10 @@ import java.io.Reader;
  */
 public abstract class PlistNode {
     public abstract PlistNode[] getChildren();
+
     public abstract PlistNode cd(String type);
+
     public abstract PlistNode cdkey(String key);
+
     public abstract Reader getKeyValue(String key);
 }

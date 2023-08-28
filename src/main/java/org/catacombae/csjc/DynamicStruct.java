@@ -25,5 +25,6 @@ package org.catacombae.csjc;
  */
 public interface DynamicStruct extends AbstractStruct {
     public int maxSize();
+
     public int occupiedSize();
 }

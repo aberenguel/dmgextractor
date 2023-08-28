@@ -19,6 +19,7 @@
 package org.catacombae.io;
 
 import java.util.LinkedList;
+
 import org.catacombae.util.Util;
 
 /**
@@ -40,61 +41,57 @@ class IOLog {
     public boolean debug = defaultDebug;
 
     private IOLog(Class cls) {
-        final LinkedList<String> debugLogProperties = new LinkedList<String>();
-        final LinkedList<String> traceLogProperties = new LinkedList<String>();
+        final LinkedList<String> debugLogProperties = new LinkedList<>();
+        final LinkedList<String> traceLogProperties = new LinkedList<>();
         String component = null;
 
-        for(String s : cls.getCanonicalName().split("\\.")) {
+        for (String s : cls.getCanonicalName().split("\\.")) {
             component = ((component != null) ? component + "." : "") + s;
             debugLogProperties.add(component + ".debug");
             traceLogProperties.add(component + ".trace");
         }
 
-        this.debug = Util.booleanEnabledByProperties(this.debug,
-                debugLogProperties.toArray(new String[debugLogProperties.
-                size()]));
-        this.trace = Util.booleanEnabledByProperties(this.trace,
-                traceLogProperties.toArray(new String[traceLogProperties.
-                size()]));
+        this.debug = Util.booleanEnabledByProperties(this.debug, debugLogProperties.toArray(new String[debugLogProperties.size()]));
+        this.trace = Util.booleanEnabledByProperties(this.trace, traceLogProperties.toArray(new String[traceLogProperties.size()]));
     }
 
     /** Emits a 'debug' level message. */
     public void debug(String message) {
-        if(debug)
+        if (debug)
             System.err.println("DEBUG: " + message);
     }
 
     /**
      * Free form trace level log message.
+     * 
      * @param msg the message to emit.
      */
     public void trace(String msg) {
-        if(trace)
+        if (trace)
             System.err.println("TRACE: " + msg);
     }
 
     /**
-     * Called upon method entry, and generates a trace level message starting
-     * with "ENTER: ".
+     * Called upon method entry, and generates a trace level message starting with
+     * "ENTER: ".
      *
      * @param methodName the name of the method. <code>null</code> indicates a
-     * constructor and the message will be formatted accordingly.
-     * @param args the method/constructor's arguments.
+     *                   constructor and the message will be formatted accordingly.
+     * @param args       the method/constructor's arguments.
      */
     public void traceEnter(Object... args) {
-        if(trace) {
-            final StackTraceElement ste =
-                    Thread.currentThread().getStackTrace()[2];
+        if (trace) {
+            final StackTraceElement ste = Thread.currentThread().getStackTrace()[2];
             final String className = ste.getClassName();
             final String methodName = ste.getMethodName();
 
             StringBuilder sb = new StringBuilder("ENTER: ");
             sb.append(className);
-            if(methodName != null)
+            if (methodName != null)
                 sb.append(".").append(methodName);
             sb.append("(");
-            for(int i = 0; i < args.length; ++i) {
-                if(i != 0) {
+            for (int i = 0; i < args.length; ++i) {
+                if (i != 0) {
                     sb.append(", ");
                 }
                 sb.append(args[i]);
@@ -106,35 +103,33 @@ class IOLog {
     }
 
     /**
-     * Called upon method exit, and generates a trace level message starting
-     * with "LEAVE: ".
+     * Called upon method exit, and generates a trace level message starting with
+     * "LEAVE: ".
      *
      * @param methodName the name of the method. <code>null</code> indicates a
-     * constructor and the message will be formatted accordingly.
-     * @param args the method/constructor's arguments.
+     *                   constructor and the message will be formatted accordingly.
+     * @param args       the method/constructor's arguments.
      */
     public void traceLeave(Object... args) {
-        if(trace) {
-            final StackTraceElement ste =
-                    Thread.currentThread().getStackTrace()[2];
+        if (trace) {
+            final StackTraceElement ste = Thread.currentThread().getStackTrace()[2];
             final String className = ste.getClassName();
             final String methodName = ste.getMethodName();
 
             StringBuilder sb = new StringBuilder("LEAVE: ");
             sb.append(className);
-            if(methodName != null)
+            if (methodName != null)
                 sb.append(".").append(methodName);
             sb.append("(");
-            for(int i = 0; i < args.length; ++i) {
-                if(i != 0) {
+            for (int i = 0; i < args.length; ++i) {
+                if (i != 0) {
                     sb.append(", ");
                 }
                 sb.append(args[i]);
             }
             /*
-            if(retval != null)
-                sb.append("): ").append(retval);
-            else*/
+             * if(retval != null) sb.append("): ").append(retval); else
+             */
             sb.append(")");
 
             System.err.println(sb.toString());
@@ -143,10 +138,11 @@ class IOLog {
 
     /**
      * Called before a method returns with a value.
+     * 
      * @param retval the value returned.
      */
     public void traceReturn(Object retval) {
-        if(trace)
+        if (trace)
             System.err.println("RETURN: " + retval);
     }
 
@@ -161,10 +157,7 @@ class IOLog {
     }
 
     /*
-    public static void traceLeaveVoid(String methodName, Object... args) {
-        if(trace) {
-            traceLeave(methodName, null, args);
-        }
-    }
-    */
+     * public static void traceLeaveVoid(String methodName, Object... args) {
+     * if(trace) { traceLeave(methodName, null, args); } }
+     */
 }

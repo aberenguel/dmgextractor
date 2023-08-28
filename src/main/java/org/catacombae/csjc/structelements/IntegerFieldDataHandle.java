@@ -18,6 +18,7 @@
 package org.catacombae.csjc.structelements;
 
 import java.lang.reflect.Field;
+
 import org.catacombae.util.Util;
 
 /**
@@ -31,14 +32,14 @@ class IntegerFieldDataHandle implements DataHandle {
 
     public IntegerFieldDataHandle(Object object, Field field, int length) {
 
-        switch(length) {
-            case 1:
-            case 2:
-            case 4:
-            case 8:
-                break;
-            default:
-                throw new IllegalArgumentException("Invalid length: " + length);
+        switch (length) {
+        case 1:
+        case 2:
+        case 4:
+        case 8:
+            break;
+        default:
+            throw new IllegalArgumentException("Invalid length: " + length);
         }
 
         this.object = object;
@@ -46,38 +47,40 @@ class IntegerFieldDataHandle implements DataHandle {
         this.length = length;
     }
 
+    @Override
     public byte[] getBytesAsCopy() {
         try {
             byte[] res;
 
-            switch(length) {
-                case 1:
-                    res = Util.toByteArrayBE(field.getByte(object));
-                    break;
-                case 2:
-                    res = Util.toByteArrayBE(field.getShort(object));
-                    break;
-                case 4:
-                    res = Util.toByteArrayBE(field.getInt(object));
-                    break;
-                case 8:
-                    res = Util.toByteArrayBE(field.getLong(object));
-                    break;
-                default:
-                    throw new RuntimeException(); // Won't happen.
+            switch (length) {
+            case 1:
+                res = Util.toByteArrayBE(field.getByte(object));
+                break;
+            case 2:
+                res = Util.toByteArrayBE(field.getShort(object));
+                break;
+            case 4:
+                res = Util.toByteArrayBE(field.getInt(object));
+                break;
+            case 8:
+                res = Util.toByteArrayBE(field.getLong(object));
+                break;
+            default:
+                throw new RuntimeException(); // Won't happen.
             }
 
             return res;
-        } catch(IllegalAccessException e) {
-            throw new RuntimeException("Illegal access while trying to " +
-                    "read field: [" + field, e);
+        } catch (IllegalAccessException e) {
+            throw new RuntimeException("Illegal access while trying to " + "read field: [" + field, e);
         }
     }
 
+    @Override
     public byte[] getBytesAsCopy(int offset, int length) {
         return Util.createCopy(getBytesAsCopy(), offset, length);
     }
 
+    @Override
     public int getLength() {
         return length;
     }

@@ -27,14 +27,12 @@ public class SparseImageRecognizer {
     public static boolean isSparseImage(final ReadableRandomAccessStream s) {
         byte[] headerData = new byte[4096];
         s.seek(0);
-        if(s.read(headerData) != 4096) {
+        if (s.read(headerData) != 4096) {
             return false;
         }
 
         SparseImageHeader header = new SparseImageHeader(headerData, 0);
-        if(Util.readString(header.getSignature(), "US-ASCII").
-                equals("sprs"))
-        {
+        if (Util.readString(header.getSignature(), "US-ASCII").equals("sprs")) {
             return true;
         }
 

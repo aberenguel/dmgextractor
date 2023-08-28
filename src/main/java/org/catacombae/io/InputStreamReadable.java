@@ -39,16 +39,17 @@ public class InputStreamReadable extends BasicReadable implements Stream {
     public int read(byte[] data, int pos, int len) throws RuntimeIOException {
         try {
             return is.read(data, pos, len);
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             throw new RuntimeIOException(ex);
         }
     }
 
     /** {@inheritDoc} */
+    @Override
     public void close() throws RuntimeIOException {
         try {
             is.close();
-        } catch(IOException ex) {
+        } catch (IOException ex) {
             throw new RuntimeIOException(ex);
         }
     }

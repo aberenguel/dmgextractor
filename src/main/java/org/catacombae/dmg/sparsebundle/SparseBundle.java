@@ -22,6 +22,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.nio.channels.FileLock;
+
 import org.catacombae.io.ReadableFileStream;
 import org.catacombae.io.ReadableRandomAccessStream;
 import org.catacombae.io.ReadableRandomAccessSubstream;
@@ -61,64 +62,54 @@ class SparseBundle {
         boolean backupInfoFileLocked = false;
         boolean tokenFileLocked = false;
 
-        for(FileAccessor f : files) {
-            if(f.getName().equals(mainInfoFilename))
+        for (FileAccessor f : files) {
+            if (f.getName().equals(mainInfoFilename))
                 mainInfoFile = f;
-            else if(f.getName().equals(backupInfoFilename))
+            else if (f.getName().equals(backupInfoFilename))
                 backupInfoFile = f;
-            else if(f.getName().equals(tokenFilename))
+            else if (f.getName().equals(tokenFilename))
                 tokenFile = f;
-            else if(f.getName().equals(bandsDirname))
+            else if (f.getName().equals(bandsDirname))
                 bandsDirFile = f;
             else
-                System.err.println("Warning: Encountered unknown file \"" +
-                        f.getName() + " in sparse bundle base dir (\"" +
-                        sparseBundleDir.getAbsolutePath() + "\").");
+                System.err.println("Warning: Encountered unknown file \"" + f.getName() + " in sparse bundle base dir (\""
+                        + sparseBundleDir.getAbsolutePath() + "\").");
         }
 
-        if(mainInfoFile == null || backupInfoFile == null ||
-                tokenFile == null || bandsDirFile == null) {
-            throw new RuntimeIOException("Some files are missing from the " +
-                    "sparse bundle directory (\"" +
-                    sparseBundleDir.getAbsolutePath() + "\").");
-        }
-        else if(!bandsDirFile.exists() || !bandsDirFile.isDirectory())
-            throw new RuntimeIOException("Invalid '" + bandsDirname + "' " +
-                    "directory.");
+        if (mainInfoFile == null || backupInfoFile == null || tokenFile == null || bandsDirFile == null) {
+            throw new RuntimeIOException(
+                    "Some files are missing from the " + "sparse bundle directory (\"" + sparseBundleDir.getAbsolutePath() + "\").");
+        } else if (!bandsDirFile.exists() || !bandsDirFile.isDirectory())
+            throw new RuntimeIOException("Invalid '" + bandsDirname + "' " + "directory.");
 
         try {
             mainInfoFile.lock();
             mainInfoFileLocked = true;
-        } catch(RuntimeIOException ex) {
-            System.err.println("Warning: Failed to acquire a shared lock on " +
-                    "'" + mainInfoFilename + "'.");
+        } catch (RuntimeIOException ex) {
+            System.err.println("Warning: Failed to acquire a shared lock on " + "'" + mainInfoFilename + "'.");
         }
 
         try {
             backupInfoFile.lock();
             backupInfoFileLocked = true;
-        } catch(RuntimeIOException ex) {
-            System.err.println("Warning: Failed to acquire a shared lock on " +
-                    "'" + backupInfoFilename + "'.");
+        } catch (RuntimeIOException ex) {
+            System.err.println("Warning: Failed to acquire a shared lock on " + "'" + backupInfoFilename + "'.");
         }
 
         try {
             tokenFile.lock();
             tokenFileLocked = true;
-        } catch(RuntimeIOException ex) {
-            System.err.println("Warning: Failed to acquire a shared lock on " +
-                    "'" + tokenFilename + "'.");
+        } catch (RuntimeIOException ex) {
+            System.err.println("Warning: Failed to acquire a shared lock on " + "'" + tokenFilename + "'.");
         }
 
         try {
             this.mainInfo = new Info(mainInfoFile, mainInfoFileLocked);
-        }
-        catch(RuntimeIOException ex) {
+        } catch (RuntimeIOException ex) {
             final IOException cause = ex.getIOCause();
 
-            if(cause != null) {
-                throw new RuntimeIOException("Exception while parsing '" +
-                        mainInfoFilename + "'.", cause);
+            if (cause != null) {
+                throw new RuntimeIOException("Exception while parsing '" + mainInfoFilename + "'.", cause);
             }
 
             throw ex;
@@ -126,13 +117,11 @@ class SparseBundle {
 
         try {
             this.backupInfo = new Info(backupInfoFile, backupInfoFileLocked);
-        }
-        catch(RuntimeIOException ex) {
+        } catch (RuntimeIOException ex) {
             final IOException cause = ex.getIOCause();
 
-            if(cause != null) {
-                throw new RuntimeIOException("Exception while parsing '" +
-                        backupInfoFilename + "'.", cause);
+            if (cause != null) {
+                throw new RuntimeIOException("Exception while parsing '" + backupInfoFilename + "'.", cause);
             }
 
             throw ex;
@@ -145,34 +134,30 @@ class SparseBundle {
         /* Cached variables. */
         this.size = mainInfo.getSize();
         this.bandSize = mainInfo.getBandSize();
-        this.bandCount = (mainInfo.getSize() + mainInfo.getBandSize() - 1) /
-                mainInfo.getBandSize();
+        this.bandCount = (mainInfo.getSize() + mainInfo.getBandSize() - 1) / mainInfo.getBandSize();
 
         /* Check the 'bands' directory. */
         checkBandsDir();
     }
 
     private void checkBandsDir() throws RuntimeIOException {
-        for(FileAccessor f : bandsDir.listFiles()) {
-            if(!f.isFile())
-                throw new RuntimeIOException("Encountered non-file content " +
-                        "inside bands directory.");
+        for (FileAccessor f : bandsDir.listFiles()) {
+            if (!f.isFile())
+                throw new RuntimeIOException("Encountered non-file content " + "inside bands directory.");
 
             final String curName = f.getName();
             final long bandNumber;
             try {
                 bandNumber = Long.parseLong(curName, 16);
-            } catch(NumberFormatException nfe) {
-                throw new RuntimeIOException("Encountered non-parseable " +
-                        "filename in bands directory: \"" + curName + "\"");
+            } catch (NumberFormatException nfe) {
+                throw new RuntimeIOException("Encountered non-parseable " + "filename in bands directory: \"" + curName + "\"");
             }
 
-            //System.err.println("Found band number: " + bandNumber + " " +
-            //        "(filename: \"" + curName + "\")");
+            // System.err.println("Found band number: " + bandNumber + " " +
+            // "(filename: \"" + curName + "\")");
 
-            if(bandNumber < 0 || bandNumber > bandCount - 1)
-                throw new RuntimeException("Invalid band number: " +
-                        bandNumber);
+            if (bandNumber < 0 || bandNumber > bandCount - 1)
+                throw new RuntimeException("Invalid band number: " + bandNumber);
         }
     }
 
@@ -210,8 +195,8 @@ class SparseBundle {
     /**
      * Looks up and returns the {@link Band} with the specified band number.
      *
-     * The caller is responsible for closing the {@link Band} when it is done
-     * with it.
+     * The caller is responsible for closing the {@link Band} when it is done with
+     * it.
      *
      * @return the {@link Band} with the specified band number.
      */
@@ -219,41 +204,39 @@ class SparseBundle {
         final String bandFilename = Long.toHexString(bandNumber);
         final FileAccessor bandFile = bandsDir.lookupChild(bandFilename);
         boolean bandFileLocked = false;
-        if(!bandFile.exists())
+        if (!bandFile.exists())
             return null;
 
         try {
             bandFile.lock();
             bandFileLocked = true;
-        } catch(RuntimeIOException ex) {
-            System.err.println("Warning: Failed to acquire a shared lock on " +
-                    "'" + bandFilename + "'.");
+        } catch (RuntimeIOException ex) {
+            System.err.println("Warning: Failed to acquire a shared lock on " + "'" + bandFilename + "'.");
         }
 
         final long curBandSize;
-        try { curBandSize = bandFile.length(); }
-        catch(RuntimeIOException ex) {
+        try {
+            curBandSize = bandFile.length();
+        } catch (RuntimeIOException ex) {
             final IOException cause = ex.getIOCause();
 
-            if(cause != null) {
-                throw new RuntimeIOException("Exception while querying band " +
-                        "file length.", cause);
+            if (cause != null) {
+                throw new RuntimeIOException("Exception while querying band " + "file length.", cause);
             }
 
             throw ex;
         }
 
-        if(curBandSize > bandSize)
-            throw new RuntimeIOException("Invalid band: Size (" + curBandSize +
-                    ") is larger than bandSize (" + bandSize + ").");
+        if (curBandSize > bandSize)
+            throw new RuntimeIOException("Invalid band: Size (" + curBandSize + ") is larger than bandSize (" + bandSize + ").");
 
-        try { return new Band(bandFile, bandFileLocked, bandSize); }
-        catch(RuntimeIOException ex) {
+        try {
+            return new Band(bandFile, bandFileLocked, bandSize);
+        } catch (RuntimeIOException ex) {
             final IOException cause = ex.getIOCause();
 
-            if(cause != null) {
-                throw new RuntimeIOException("Exception while creating Band " +
-                        "instance.", ex);
+            if (cause != null) {
+                throw new RuntimeIOException("Exception while creating Band " + "instance.", ex);
             }
 
             throw ex;
@@ -276,61 +259,65 @@ class SparseBundle {
             this.f = f;
         }
 
+        @Override
         public FileAccessor[] listFiles() {
             final File[] childFiles = f.listFiles();
-            final FileAccessor[] childAccessors =
-                    new FileAccessor[childFiles.length];
+            final FileAccessor[] childAccessors = new FileAccessor[childFiles.length];
 
-            for(int i = 0; i < childFiles.length; ++i) {
+            for (int i = 0; i < childFiles.length; ++i) {
                 childAccessors[i] = new JavaFileAccessor(childFiles[i]);
             }
 
             return childAccessors;
         }
 
+        @Override
         public boolean isFile() {
             return f.isFile();
         }
 
+        @Override
         public boolean isDirectory() {
             return f.isDirectory();
         }
 
+        @Override
         public String getName() {
             return f.getName();
         }
 
+        @Override
         public String getAbsolutePath() {
             return f.getAbsolutePath();
         }
 
+        @Override
         public boolean exists() {
             return f.exists();
         }
 
+        @Override
         public FileAccessor lookupChild(final String name) {
             return new JavaFileAccessor(new File(f, name));
         }
 
         private void initRaf() {
-            if(raf == null) {
+            if (raf == null) {
                 RandomAccessFile newRaf = null;
                 SynchronizedReadableRandomAccessStream newRafSyncStream = null;
 
                 try {
                     newRaf = new RandomAccessFile(f, "r");
-                    newRafSyncStream =
-                            new SynchronizedReadableRandomAccessStream(
-                            new ReadableFileStream(newRaf, f.getPath()));
-                } catch(FileNotFoundException ex) {
+                    newRafSyncStream = new SynchronizedReadableRandomAccessStream(new ReadableFileStream(newRaf, f.getPath()));
+                } catch (FileNotFoundException ex) {
                     throw new RuntimeIOException(ex);
-                } catch(RuntimeException ex) {
+                } catch (RuntimeException ex) {
 
                 } finally {
-                    if(newRafSyncStream == null) {
+                    if (newRafSyncStream == null) {
                         try {
                             newRaf.close();
-                        } catch(IOException ex) {
+                        } catch (IOException ex) {
                             throw new RuntimeIOException(ex);
                         }
                     }
@@ -341,54 +328,59 @@ class SparseBundle {
             }
         }
 
+        @Override
         public synchronized long length() {
             initRaf();
 
             try {
                 return raf.length();
-            } catch(IOException ex) {
+            } catch (IOException ex) {
                 throw new RuntimeIOException(ex);
             }
         }
 
+        @Override
         public synchronized ReadableRandomAccessStream createReadableStream() {
             initRaf();
 
             return new ReadableRandomAccessSubstream(rafSyncStream);
         }
 
+        @Override
         public synchronized void lock() {
             initRaf();
 
-            if(lock != null) {
+            if (lock != null) {
                 throw new RuntimeException("Already locked!");
             }
 
             try {
                 lock = raf.getChannel().lock(0L, Long.MAX_VALUE, true);
-            } catch(IOException ex) {
+            } catch (IOException ex) {
                 throw new RuntimeIOException(ex);
             }
         }
 
+        @Override
         public synchronized void unlock() {
-            if(lock == null) {
+            if (lock == null) {
                 throw new RuntimeException("Not locked!");
             }
 
             try {
                 lock.release();
                 lock = null;
-            } catch(IOException ex) {
+            } catch (IOException ex) {
                 throw new RuntimeIOException(ex);
             }
         }
 
+        @Override
         public synchronized void close() {
             try {
                 rafSyncStream.close();
                 raf.close();
-            } catch(IOException ex) {
+            } catch (IOException ex) {
                 throw new RuntimeIOException(ex);
             }
         }

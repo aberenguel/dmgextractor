@@ -18,6 +18,7 @@
 package org.catacombae.dmg.sparsebundle;
 
 import java.io.IOException;
+
 import org.catacombae.io.ReadableRandomAccessStream;
 import org.catacombae.io.RuntimeIOException;
 
@@ -41,28 +42,26 @@ abstract class BundleMember {
         stream.close();
 
         try {
-            if(fileLocked) {
+            if (fileLocked) {
                 file.unlock();
             }
-        } catch(RuntimeIOException ex) {
+        } catch (RuntimeIOException ex) {
             final IOException cause = ex.getIOCause();
 
-            if(cause != null) {
+            if (cause != null) {
                 ex.printStackTrace();
-            }
-            else {
+            } else {
                 throw ex;
             }
         }
 
         try {
             file.close();
-        } catch(RuntimeIOException ex) {
+        } catch (RuntimeIOException ex) {
             final IOException cause = ex.getIOCause();
-            if(cause != null) {
+            if (cause != null) {
                 ex.printStackTrace();
-            }
-            else {
+            } else {
                 throw ex;
             }
         }

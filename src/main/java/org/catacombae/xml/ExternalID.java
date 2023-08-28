@@ -25,12 +25,13 @@ public class ExternalID {
     public String systemLiteral;
 
     public ExternalID(String pubidLiteral, String systemLiteral) {
-	this.pubidLiteral = pubidLiteral;
-	this.systemLiteral = systemLiteral;
-	this.type = PUBLIC;
+        this.pubidLiteral = pubidLiteral;
+        this.systemLiteral = systemLiteral;
+        this.type = PUBLIC;
     }
+
     public ExternalID(String systemLiteral) {
-	this.systemLiteral = systemLiteral;
-	this.type = SYSTEM;
+        this.systemLiteral = systemLiteral;
+        this.type = SYSTEM;
     }
 }

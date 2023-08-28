@@ -43,9 +43,9 @@ public abstract class StringRepresentableField extends Field {
     public abstract String validateStringValue(String s);
 
     /**
-     * Returns the unit for this field, if applicable. For instance, a field
-     * with an integer value might have "bytes" as units, or "inches". The unit
-     * property is non-mandatory, so this method may return <code>null</code>.
+     * Returns the unit for this field, if applicable. For instance, a field with an
+     * integer value might have "bytes" as units, or "inches". The unit property is
+     * non-mandatory, so this method may return <code>null</code>.
      *
      * @return the unit for this field, or <code>null</code> if none is defined.
      */

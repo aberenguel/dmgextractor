@@ -17,55 +17,61 @@
 
 package org.catacombae.dmg.udif;
 
-import java.io.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.LinkedList;
 
 import org.apache.commons.codec.binary.Base64InputStream;
-import org.catacombae.dmgextractor.Util;
-import org.catacombae.dmgextractor.io.*;
+import org.catacombae.dmgextractor.io.ReaderInputStream;
 import org.catacombae.plist.PlistNode;
 import org.catacombae.plist.XmlPlist;
 
 public class Plist extends XmlPlist {
 
     public Plist(byte[] data) {
-	this(data, 0, data.length);
+        this(data, 0, data.length);
     }
+
     public Plist(byte[] data, boolean useSAXParser) {
-	this(data, 0, data.length, useSAXParser);
+        this(data, 0, data.length, useSAXParser);
     }
+
     public Plist(byte[] data, int offset, int length) {
-	this(data, offset, length, false);
+        this(data, offset, length, false);
     }
+
     public Plist(byte[] data, int offset, int length, boolean useSAXParser) {
         super(data, offset, length, useSAXParser);
     }
 
-    //public byte[] getData() { return Util.createCopy(plistData); }
+    // public byte[] getData() { return Util.createCopy(plistData); }
 
     public PlistPartition[] getPartitions() throws IOException {
-	LinkedList<PlistPartition> partitionList = new LinkedList<PlistPartition>();
-	PlistNode current = getRootNode();
-	current = current.cd("dict");
-	current = current.cdkey("resource-fork");
-	current = current.cdkey("blkx");
+        LinkedList<PlistPartition> partitionList = new LinkedList<>();
+        PlistNode current = getRootNode();
+        current = current.cd("dict");
+        current = current.cdkey("resource-fork");
+        current = current.cdkey("blkx");
 
-	// Variables to keep track of the pointers of the previous partition
-	long previousOutOffset = 0;
-	long previousInOffset = 0;
+        // Variables to keep track of the pointers of the previous partition
+        long previousOutOffset = 0;
+        long previousInOffset = 0;
 
-	// Iterate over the partitions and gather data
-        for(PlistNode pn : current.getChildren()) {
-            String partitionName = Util.readFully(pn.getKeyValue("Name"));
-            String partitionID = Util.readFully(pn.getKeyValue("ID"));
-            String partitionAttributes = Util.readFully(pn.getKeyValue("Attributes"));
-            //System.err.println("Retrieving data...");
-            //(new BufferedReader(new InputStreamReader(System.in))).readLine();
+        // Iterate over the partitions and gather data
+        for (PlistNode pn : current.getChildren()) {
+            String partitionName = org.catacombae.util.Util.readFully(pn.getKeyValue("Name"));
+            String partitionID = org.catacombae.util.Util.readFully(pn.getKeyValue("ID"));
+            String partitionAttributes = org.catacombae.util.Util.readFully(pn.getKeyValue("Attributes"));
+            // System.err.println("Retrieving data...");
+            // (new BufferedReader(new InputStreamReader(System.in))).readLine();
             Reader base64Data = pn.getKeyValue("Data");
-            //System.gc();
-            //System.err.println("Converting data to binary form... free memory: " + Runtime.getRuntime().freeMemory() + " total memory: " + Runtime.getRuntime().totalMemory());
-            //byte[] data = Base64.decode(base64Data);
+            // System.gc();
+            // System.err.println("Converting data to binary form... free memory: " +
+            // Runtime.getRuntime().freeMemory() + " total memory: " +
+            // Runtime.getRuntime().totalMemory());
+            // byte[] data = Base64.decode(base64Data);
 
 //             try {
 //                 InputStream yo = new Base64.InputStream(new ReaderInputStream(base64Data, Charset.forName("US-ASCII")));
@@ -101,15 +107,15 @@ public class Plist extends XmlPlist {
 
             InputStream base64DataInputStream = new Base64InputStream(new ReaderInputStream(base64Data, Charset.forName("US-ASCII")));
 
-            //System.err.println("Creating PlistPartition.");
-            //System.out.println("Block list for partition " + i++ + ":");
-            PlistPartition dpp = new PlistPartition(partitionName, partitionID, partitionAttributes,
-                                                          base64DataInputStream, previousOutOffset, previousInOffset);
+            // System.err.println("Creating PlistPartition.");
+            // System.out.println("Block list for partition " + i++ + ":");
+            PlistPartition dpp = new PlistPartition(partitionName, partitionID, partitionAttributes, base64DataInputStream, previousOutOffset,
+                    previousInOffset);
             previousOutOffset = dpp.getFinalOutOffset();
             previousInOffset = dpp.getFinalInOffset();
             partitionList.addLast(dpp);
         }
 
-	return partitionList.toArray(new PlistPartition[partitionList.size()]);
+        return partitionList.toArray(new PlistPartition[partitionList.size()]);
     }
 }

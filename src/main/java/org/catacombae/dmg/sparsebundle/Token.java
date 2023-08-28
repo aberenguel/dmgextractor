@@ -18,6 +18,7 @@
 package org.catacombae.dmg.sparsebundle;
 
 import java.io.IOException;
+
 import org.catacombae.io.RuntimeIOException;
 
 /**
@@ -32,12 +33,11 @@ class Token extends BundleMember {
 
         try {
             this.size = this.stream.length();
-        } catch(RuntimeIOException ex) {
+        } catch (RuntimeIOException ex) {
             final IOException cause = ex.getIOCause();
 
-            if(cause != null) {
-                throw new RuntimeIOException("Exception while getting size " +
-                        "of 'token' file.", cause);
+            if (cause != null) {
+                throw new RuntimeIOException("Exception while getting size " + "of 'token' file.", cause);
             }
 
             throw ex;
@@ -48,9 +48,7 @@ class Token extends BundleMember {
         return this.size;
     }
 
-    public final int read(final long pos, final byte[] data, final int offset,
-            final int length) throws RuntimeIOException
-    {
+    public final int read(final long pos, final byte[] data, final int offset, final int length) throws RuntimeIOException {
         this.stream.seek(pos);
 
         return this.stream.read(data, offset, length);

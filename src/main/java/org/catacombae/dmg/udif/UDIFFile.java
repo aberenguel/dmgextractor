@@ -22,17 +22,17 @@ import org.catacombae.io.ReadableRandomAccessStream;
 public class UDIFFile {
     private ReadableRandomAccessStream stream;
     private UDIFFileView dmgView;
-    
+
     public UDIFFile(ReadableRandomAccessStream stream) {
-	this.stream = stream;
-	this.dmgView = new UDIFFileView(stream);
+        this.stream = stream;
+        this.dmgView = new UDIFFileView(stream);
     }
-    
+
     public UDIFFileView getView() {
-	return dmgView;
+        return dmgView;
     }
-    
+
     public ReadableRandomAccessStream getStream() {
-	return stream;
+        return stream;
     }
 }

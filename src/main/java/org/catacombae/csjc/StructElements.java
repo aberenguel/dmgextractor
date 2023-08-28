@@ -17,12 +17,12 @@
 
 package org.catacombae.csjc;
 
-import org.catacombae.csjc.structelements.Signedness;
-import org.catacombae.csjc.structelements.Endianness;
-import org.catacombae.csjc.structelements.IntegerFieldBits;
 import org.catacombae.csjc.structelements.Dictionary;
+import org.catacombae.csjc.structelements.Endianness;
 import org.catacombae.csjc.structelements.FieldType;
+import org.catacombae.csjc.structelements.IntegerFieldBits;
 import org.catacombae.csjc.structelements.IntegerFieldRepresentation;
+import org.catacombae.csjc.structelements.Signedness;
 
 /**
  * Interface to implement when a struct wants to present detailed information on
@@ -71,8 +71,8 @@ public interface StructElements {
     public static final IntegerFieldRepresentation BINARY = IntegerFieldRepresentation.BINARY;
 
     /**
-     * Shorthand subclass, so the user doesn't have to import DictionaryBuilder in every
-     * implementation of StructElements.
+     * Shorthand subclass, so the user doesn't have to import DictionaryBuilder in
+     * every implementation of StructElements.
      */
     public class DictionaryBuilder extends org.catacombae.csjc.structelements.DictionaryBuilder {
         /**
@@ -81,8 +81,10 @@ public interface StructElements {
         public DictionaryBuilder(String typeName) {
             super(typeName);
         }
+
         /**
-         * @see org.catacombae.csjc.structelements.DictionaryBuilder#DictionaryBuilder(java.lang.String, java.lang.String)
+         * @see org.catacombae.csjc.structelements.DictionaryBuilder#DictionaryBuilder(java.lang.String,
+         *      java.lang.String)
          */
         public DictionaryBuilder(String typeName, String typeDescription) {
             super(typeName, typeDescription);
@@ -90,9 +92,9 @@ public interface StructElements {
     }
 
     /**
-     * Returns a dictionary of the elements of this data structure. The keys in
-     * the dictionary should be the respective variable names, and the elements
-     * should provide access to all the fields of the data structure.
+     * Returns a dictionary of the elements of this data structure. The keys in the
+     * dictionary should be the respective variable names, and the elements should
+     * provide access to all the fields of the data structure.
      *
      * @return a dictionary of the elements of this data structure.
      */

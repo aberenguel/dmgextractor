@@ -22,6 +22,7 @@ package org.catacombae.csjc.structelements;
  */
 public interface DataHandle {
     public byte[] getBytesAsCopy();
+
     public byte[] getBytesAsCopy(int offset, int length);
 
     public int getLength();

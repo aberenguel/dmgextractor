@@ -18,6 +18,7 @@
 package org.catacombae.dmg.udif;
 
 import java.io.RandomAccessFile;
+
 import org.catacombae.io.ReadableFileStream;
 import org.catacombae.io.ReadableRandomAccessStream;
 import org.catacombae.io.RuntimeIOException;
@@ -33,28 +34,26 @@ public class UDIFDetector {
      * Convenience method. Equivalent to
      * <code>isUDIFEncoded(new ReadableFileStream(raf));</code>.
      */
-    public static boolean isUDIFEncoded(RandomAccessFile raf, String openPath)
-            throws RuntimeIOException
-    {
+    public static boolean isUDIFEncoded(RandomAccessFile raf, String openPath) throws RuntimeIOException {
         return isUDIFEncoded(new ReadableFileStream(raf, openPath));
     }
 
     /**
-     * Searches through the supplied RandomAccessStream for signature data that validates
-     * the data as UDIF encoded.
+     * Searches through the supplied RandomAccessStream for signature data that
+     * validates the data as UDIF encoded.
+     * 
      * @throws RuntimeIOException on I/O error
      */
     public static boolean isUDIFEncoded(ReadableRandomAccessStream ras) throws RuntimeIOException {
-        if(ras.length() < 512)
+        if (ras.length() < 512)
             return false;
 
         byte[] kolyData = new byte[Koly.length()];
         ras.seek(ras.length() - 512);
-        if(ras.read(kolyData) != kolyData.length)
+        if (ras.read(kolyData) != kolyData.length)
             throw new RuntimeException("Could not read all koly data...");
         Koly koly = new Koly(kolyData, 0);
-        return koly.isValid() &&
-                koly.getPlistBegin1() >= 0 && koly.getPlistSize() > 0 &&
-                (koly.getPlistBegin1() + koly.getPlistSize()) <= (ras.length() - 512);
+        return koly.isValid() && koly.getPlistBegin1() >= 0 && koly.getPlistSize() > 0
+                && (koly.getPlistBegin1() + koly.getPlistSize()) <= (ras.length() - 512);
     }
 }

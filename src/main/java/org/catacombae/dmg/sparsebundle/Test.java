@@ -35,20 +35,18 @@ public class Test {
         final long startTime = System.currentTimeMillis();
         long lastTime = startTime;
 
-        while(true) {
+        while (true) {
             int curBytesRead = stream.read(buf);
-            if(curBytesRead == -1)
+            if (curBytesRead == -1)
                 break;
-            else if(curBytesRead < 0)
-                throw new RuntimeException("Wtf... curBytesRead=" +
-                        curBytesRead);
+            else if (curBytesRead < 0)
+                throw new RuntimeException("Wtf... curBytesRead=" + curBytesRead);
 
             bytesRead += curBytesRead;
 
             final long curTime = System.currentTimeMillis();
-            if(curTime - lastTime > 1000) {
-                System.err.println("Transferred " + bytesRead + " bytes in " +
-                        (curTime-startTime)/((double) 1000.0) + " seconds.");
+            if (curTime - lastTime > 1000) {
+                System.err.println("Transferred " + bytesRead + " bytes in " + (curTime - startTime) / (1000.0) + " seconds.");
                 lastTime = curTime;
             }
         }
@@ -56,8 +54,7 @@ public class Test {
         System.err.println("Transfer complete.");
 
         final long curTime = System.currentTimeMillis();
-        System.err.println("Transferred " + bytesRead + " bytes in " +
-                (curTime-startTime)/((double) 1000.0) + " seconds.");
+        System.err.println("Transferred " + bytesRead + " bytes in " + (curTime - startTime) / (1000.0) + " seconds.");
 
     }
 }

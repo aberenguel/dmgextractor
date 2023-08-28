@@ -21,18 +21,29 @@ import org.catacombae.io.ReadableRandomAccessStream;
 
 /**
  * @author <a href="http://www.catacombae.org/" target="_top">Erik Larsson</a>
-*/
+ */
 public interface FileAccessor {
     public FileAccessor[] listFiles();
+
     public boolean isFile();
+
     public boolean isDirectory();
+
     public String getName();
+
     public String getAbsolutePath();
+
     public boolean exists();
+
     public FileAccessor lookupChild(String name);
+
     public long length();
+
     public ReadableRandomAccessStream createReadableStream();
+
     public void lock();
+
     public void unlock();
+
     public void close();
 }
