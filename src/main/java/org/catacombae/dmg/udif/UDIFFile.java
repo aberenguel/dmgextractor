@@ -17,9 +17,12 @@
 
 package org.catacombae.dmg.udif;
 
+import java.io.Closeable;
+import java.io.IOException;
+
 import org.catacombae.io.ReadableRandomAccessStream;
 
-public class UDIFFile {
+public class UDIFFile implements Closeable {
     private ReadableRandomAccessStream stream;
     private UDIFFileView dmgView;
 
@@ -34,5 +37,10 @@ public class UDIFFile {
 
     public ReadableRandomAccessStream getStream() {
         return stream;
+    }
+
+    @Override
+    public void close() throws IOException {
+        stream.close();
     }
 }

@@ -99,9 +99,13 @@ public class UDIFRandomAccessStream extends BasicReadableRandomAccessStream {
         }
     }
 
-    /** @see java.io.RandomAccessFile */
     @Override
     public void close() throws RuntimeIOException {
+        try {
+            dmgFile.close();
+        } catch (IOException ex) {
+            throw new RuntimeIOException(ex);
+        }
     }
 
     /** @see java.io.RandomAccessFile */

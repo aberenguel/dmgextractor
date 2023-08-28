@@ -63,12 +63,9 @@ public class UDIFInputStream extends InputStream {
             return (int) len;
     }
 
-    /**
-     * Does nothing. You will have to close the underlying RandomAccessFile or
-     * RandomAccessStream manually.
-     */
     @Override
     public void close() throws IOException {
+        wrapped.close();
     }
 
     /** Not supported. */
